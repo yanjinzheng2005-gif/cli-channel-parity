@@ -4,6 +4,7 @@
 
 - Redact secret-like values inherited from the runner environment, including custom `_KEY`, credential, and JWT names.
 - Fail the release gate when committed `dist/` bundles do not match `src/`.
+- Keep text files on LF across Windows, macOS, and Linux so release bundles are reproducible.
 - State the exact five-job operating-system and Node.js matrix.
 - Report an accurate error for invalid `--fail-on` values.
 - Document the trusted-configuration boundary for Windows `.cmd` and `.bat` shims.
