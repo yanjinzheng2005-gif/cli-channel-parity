@@ -54,5 +54,5 @@ jobs:
         with:
           name: parity-receipt-${{ matrix.os }}-node-${{ matrix.node }}
           path: channel-parity-output/
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7

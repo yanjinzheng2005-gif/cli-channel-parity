@@ -39,7 +39,7 @@ test("bundled GitHub Action writes outputs and a readable step summary", async (
         "INPUT_FAIL-ON": "unknown"
       }
     });
-    assert.equal(result.exitCode, 0, result.stderr);
+    assert.equal(result.exitCode, 0, `stdout:\n${result.stdout}\n\nstderr:\n${result.stderr}`);
     const outputs = await readFile(outputFile, "utf8");
     const summary = await readFile(summaryFile, "utf8");
     assert.match(outputs, /result<<[\s\S]*PASS/);

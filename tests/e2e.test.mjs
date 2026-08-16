@@ -27,7 +27,15 @@ test("ten controlled fixtures produce their gold-standard verdicts", async () =>
     const report = await runParity({ configPath, outputDirectory });
     assert.equal(report.channels.length, 10);
     for (const channel of report.channels) {
-      assert.equal(channel.verdict, expected[channel.id], channel.id);
+      assert.equal(
+        channel.verdict,
+        expected[channel.id],
+        `${channel.id}\n${JSON.stringify({
+          verdict: channel.verdict,
+          executableMatches: channel.executableMatches,
+          checks: channel.checks.map(({ id, verdict, classification, evidence }) => ({ id, verdict, classification, evidence }))
+        }, null, 2)}`
+      );
       for (const check of channel.checks.filter((entry) => entry.verdict === "FAIL")) {
         assert.ok(check.rerunCommand, `${channel.id}/${check.id} has no rerun command`);
       }
