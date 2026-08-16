@@ -8,6 +8,9 @@ const BUILTIN_SECRET_PATTERNS = [
   /\bBearer\s+[A-Za-z0-9._~+\/-]{12,}=*/gi
 ];
 const QUERY_SECRET_PATTERN = /([?&](?:token|key|secret|password|auth)=)[^&\s]+/gi;
+const SECRET_ENVIRONMENT_NAME = /(?:^|_)(?:TOKEN|SECRET|PASSWORD|PASSWD|KEY|AUTH|CREDENTIALS?|JWT)(?:$|_)/i;
+
+type RedactionEnvironment = Record<string, string | undefined>;
 
 function escaped(value: string): RegExp {
   return new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
@@ -16,11 +19,13 @@ function escaped(value: string): RegExp {
 export class Redactor {
   readonly #values: string[];
 
-  constructor(values: string[] = [], environments: Array<Record<string, string> | undefined> = []) {
+  constructor(values: string[] = [], environments: Array<RedactionEnvironment | undefined> = []) {
     const secretValues = values.filter((value) => value.length >= 4);
     for (const environment of environments) {
       for (const [key, value] of Object.entries(environment ?? {})) {
-        if (/(TOKEN|SECRET|PASSWORD|PASSWD|API_KEY|AUTH)/i.test(key) && value?.length >= 12 && !/\s/.test(value)) secretValues.push(value);
+        if (SECRET_ENVIRONMENT_NAME.test(key) && typeof value === "string" && value.length >= 12) {
+          secretValues.push(value);
+        }
       }
     }
     this.#values = [...new Set(secretValues)].sort((a, b) => b.length - a.length);

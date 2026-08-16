@@ -45,7 +45,10 @@ function parse(argv: string[]): CliOptions {
     if (flag === "--config") result.config = value;
     else if (flag === "--channel") result.channels.push(value);
     else if (flag === "--output") result.output = value;
-    else if (flag === "--fail-on" && (value === "fail" || value === "unknown")) result.failOn = value;
+    else if (flag === "--fail-on") {
+      if (value !== "fail" && value !== "unknown") throw new Error("--fail-on must be fail or unknown");
+      result.failOn = value;
+    }
     else throw new Error(`Unknown option: ${flag}`);
   }
   if (!result.config) throw new Error("--config is required");

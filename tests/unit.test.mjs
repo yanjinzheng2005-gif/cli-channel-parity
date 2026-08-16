@@ -23,11 +23,12 @@ test("version parser accepts common CLI output without guessing non-semver text"
 });
 
 test("redactor removes configured values, common tokens, and the private home path", () => {
-  const redactor = new Redactor(["fixture-super-secret"], [{ API_TOKEN: "another-secret" }]);
-  const result = redactor.text(`${os.homedir()}/project ghp_abcdefghijklmnopqrstuvwxyz fixture-super-secret another-secret`);
+  const redactor = new Redactor(["fixture-super-secret"], [{ API_TOKEN: "another-secret", ACME_DEPLOY_KEY: "custom deploy key value" }]);
+  const result = redactor.text(`${os.homedir()}/project ghp_abcdefghijklmnopqrstuvwxyz fixture-super-secret another-secret custom deploy key value`);
   assert.equal(result.includes(os.homedir()), false);
   assert.equal(result.includes("fixture-super-secret"), false);
   assert.equal(result.includes("another-secret"), false);
+  assert.equal(result.includes("custom deploy key value"), false);
   assert.match(result, /\$HOME/);
   assert.match(result, /\[REDACTED\]/);
   assert.equal(redactor.text("https://example.test/?token=visible&mode=test"), "https://example.test/?token=[REDACTED]&mode=test");

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -65,5 +65,34 @@ test("ten controlled fixtures produce their gold-standard verdicts", async () =>
     assert.match(markdown, /does not represent every user machine/i);
   } finally {
     await rm(outputDirectory, { recursive: true, force: true });
+  }
+});
+
+test("secret-like values inherited from the runner environment never enter receipts", async () => {
+  const temporary = await mkdtemp(path.join(os.tmpdir(), "parity-inherited-secret-"));
+  const config = path.join(temporary, "channels.json");
+  const secret = "acme-deploy-key-that-must-not-leak";
+  const previous = process.env.ACME_DEPLOY_KEY;
+  process.env.ACME_DEPLOY_KEY = secret;
+  try {
+    await writeFile(config, `${JSON.stringify({
+      schemaVersion: 1,
+      product: "Inherited environment redaction fixture",
+      channels: [{
+        id: "secret-output",
+        executable: "not-installed",
+        install: {
+          argv: [process.execPath, "-e", "console.log(process.env.ACME_DEPLOY_KEY); process.exit(17)"]
+        }
+      }]
+    }, null, 2)}\n`, "utf8");
+    const report = await runParity({ configPath: config, outputDirectory: path.join(temporary, "reports") });
+    const serialized = JSON.stringify(report);
+    assert.equal(serialized.includes(secret), false);
+    assert.match(serialized, /\[REDACTED\]/);
+  } finally {
+    if (previous === undefined) delete process.env.ACME_DEPLOY_KEY;
+    else process.env.ACME_DEPLOY_KEY = previous;
+    await rm(temporary, { recursive: true, force: true });
   }
 });

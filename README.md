@@ -4,7 +4,7 @@
 
 A release can be correct on GitHub while Homebrew still serves an older version, npm resolves to a different executable, an installer omits a required helper, or uninstall leaves a stale command behind. This project runs the public install path on a clean runner and emits one consistent `PASS`, `FAIL`, or `UNKNOWN` receipt.
 
-> Status: working 0.1.0 experiment. The controlled acceptance suite passes locally; the public repository CI is designed to repeat it on Linux, macOS, and Windows.
+> Status: working 0.1.1 experiment. The controlled acceptance suite passes locally. Public CI covers Ubuntu on Node 20, 22, and 24, plus macOS and Windows on Node 24.
 
 ## What it proves
 
@@ -68,7 +68,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: yanjinzheng2005-gif/cli-channel-parity@v0.1.0
+      - uses: yanjinzheng2005-gif/cli-channel-parity@v0.1.1
         id: parity
         with:
           config: .github/channel-parity.json
@@ -137,7 +137,9 @@ V1 uses JSON so the repository has no YAML runtime dependency. Start with [`exam
 
 ### Command model
 
-Commands are argument arrays, not shell strings. The runner executes the named program directly with `shell: false`. This avoids hidden shell expansion and makes the evidence reproducible.
+Commands are argument arrays, not shell strings. Native executables run directly with `shell: false`. Windows cannot execute `.cmd` or `.bat` shims directly, so those files are passed to `cmd.exe /d /c` while the outer process still uses `shell: false`.
+
+Configurations are executable instructions and must be repository-owned and reviewed. On Windows, do not place `cmd.exe` metacharacters such as `&`, `|`, `%`, `<`, or `>` in `.cmd`/`.bat` arguments. Put complex logic in a reviewed script file and invoke that file as one argument-array command.
 
 Each command supports:
 
@@ -208,7 +210,7 @@ The report replaces:
 - the current home directory with `$HOME`;
 - common GitHub, npm, OpenAI-style, and bearer-token shapes;
 - values listed in top-level `redactions`;
-- channel environment values whose names look like token, secret, password, key, or auth fields.
+- inherited runner and channel environment values whose names look like token, secret, password, key, auth, credential, or JWT fields.
 
 Still, use public no-secret install paths whenever possible. Run configurations from untrusted repositories only on disposable runners. See [`SECURITY.md`](SECURITY.md).
 
@@ -228,7 +230,7 @@ The automated suite contains deterministic gold standards for:
 - JSON/Markdown agreement and redaction;
 - the bundled GitHub Action output and job summary.
 
-Run `npm run test:release` before every release. CI repeats it on Node 20, 22, and 24 across Linux, macOS, and Windows.
+Run `npm run test:release` before every release. The committed CI matrix runs Ubuntu with Node 20, 22, and 24, macOS with Node 24, and Windows with Node 24. The release gate also rebuilds `dist/` and fails if the committed Action bundles do not match `src/`.
 
 ## License
 

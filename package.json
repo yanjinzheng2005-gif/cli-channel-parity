@@ -1,6 +1,6 @@
 {
   "name": "cli-channel-parity",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Prove what users actually receive from each public CLI install channel.",
   "type": "module",
   "private": true,
@@ -35,7 +35,7 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run build && node --test tests/*.test.mjs",
     "license:check": "node scripts/check-licenses.mjs",
-    "test:release": "npm run typecheck && npm test && npm run license:check && node scripts/check-dist.mjs && node scripts/check-environment-redaction.mjs",
+    "test:release": "npm run typecheck && npm test && npm run license:check && node scripts/check-dist.mjs && node scripts/check-environment-redaction.mjs && node scripts/check-dist-sync.mjs",
     "fixture": "npm run build && node dist/cli.js run --config fixtures/channels.json --output .fixture-output --fail-on fail"
   },
   "devDependencies": {

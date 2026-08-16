@@ -373,6 +373,7 @@ var BUILTIN_SECRET_PATTERNS = [
   /\bBearer\s+[A-Za-z0-9._~+\/-]{12,}=*/gi
 ];
 var QUERY_SECRET_PATTERN = /([?&](?:token|key|secret|password|auth)=)[^&\s]+/gi;
+var SECRET_ENVIRONMENT_NAME = /(?:^|_)(?:TOKEN|SECRET|PASSWORD|PASSWD|KEY|AUTH|CREDENTIALS?|JWT)(?:$|_)/i;
 function escaped(value) {
   return new RegExp(value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g");
 }
@@ -382,7 +383,9 @@ var Redactor = class {
     const secretValues = values.filter((value) => value.length >= 4);
     for (const environment of environments) {
       for (const [key, value] of Object.entries(environment ?? {})) {
-        if (/(TOKEN|SECRET|PASSWORD|PASSWD|API_KEY|AUTH)/i.test(key) && value?.length >= 12 && !/\s/.test(value)) secretValues.push(value);
+        if (SECRET_ENVIRONMENT_NAME.test(key) && typeof value === "string" && value.length >= 12) {
+          secretValues.push(value);
+        }
       }
     }
     this.#values = [...new Set(secretValues)].sort((a, b) => b.length - a.length);
@@ -431,7 +434,7 @@ function baseTemplateValues(input) {
 }
 
 // src/core.ts
-var VERSION = "0.1.0";
+var VERSION = "0.1.1";
 var SCOPE_NOTICE = "This receipt proves only what happened on the named runner at the recorded time. It does not represent every user machine.";
 function expandMap(values, templates) {
   return Object.fromEntries(Object.entries(values ?? {}).map(([key, value]) => [key, expandTemplate(value, templates)]));
@@ -722,6 +725,7 @@ async function runParity(options) {
     if (missing.length) throw new Error(`Unknown channel id(s): ${missing.join(", ")}`);
   }
   const sensitiveEnvironments = [
+    Object.fromEntries(Object.entries(process.env).filter((entry) => typeof entry[1] === "string")),
     ...selected.flatMap((channel2) => [channel2.env, channel2.install.env, channel2.version?.env, channel2.launch?.env, channel2.uninstall?.env])
   ];
   const redactor = new Redactor(config.redactions, sensitiveEnvironments);

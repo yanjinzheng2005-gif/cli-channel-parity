@@ -57,3 +57,17 @@ test("CLI help works without configuration", async () => {
   assert.equal(result.exitCode, 0);
   assert.match(result.stdout, /--config/);
 });
+
+test("CLI explains invalid fail-on values", async () => {
+  const result = await run(process.execPath, [
+    path.join(root, "dist", "cli.js"),
+    "run",
+    "--config",
+    path.join(root, "fixtures", "channels.json"),
+    "--fail-on",
+    "sometimes"
+  ], { cwd: root, env: process.env });
+  assert.equal(result.exitCode, 3);
+  assert.match(result.stderr, /--fail-on must be fail or unknown/);
+  assert.doesNotMatch(result.stderr, /Unknown option/);
+});

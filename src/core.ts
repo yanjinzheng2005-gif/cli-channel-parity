@@ -8,7 +8,7 @@ import { commandText, Redactor } from "./redact.js";
 import { baseTemplateValues, expandTemplate, type TemplateValues } from "./template.js";
 import type { ChannelConfig, ChannelReport, CheckResult, CommandSpec, ParityConfig, ProcessResult, RunOptions, RunReport, Verdict } from "./types.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 const SCOPE_NOTICE = "This receipt proves only what happened on the named runner at the recorded time. It does not represent every user machine.";
 
 function expandMap(values: Record<string, string> | undefined, templates: TemplateValues): Record<string, string> {
@@ -319,6 +319,7 @@ export async function runParity(options: RunOptions): Promise<RunReport> {
     if (missing.length) throw new Error(`Unknown channel id(s): ${missing.join(", ")}`);
   }
   const sensitiveEnvironments: Array<Record<string, string> | undefined> = [
+    Object.fromEntries(Object.entries(process.env).filter((entry): entry is [string, string] => typeof entry[1] === "string")),
     ...selected.flatMap((channel) => [channel.env, channel.install.env, channel.version?.env, channel.launch?.env, channel.uninstall?.env])
   ];
   const redactor = new Redactor(config.redactions, sensitiveEnvironments);

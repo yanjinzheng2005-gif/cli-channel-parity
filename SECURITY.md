@@ -6,7 +6,9 @@ CLI Release Channel Parity executes the exact argument arrays declared in a repo
 
 Run untrusted configurations only inside a disposable runner. Do not use `keep-run-directory` on a shared machine. Prefer public install channels that need no secret. If a command needs a token, pass it through the runner environment; never write it into the JSON file.
 
-The reporter redacts common token shapes, configured redaction values, secret-like channel environment values, and the current home directory. Redaction is defense in depth, not permission to print secrets deliberately.
+The reporter redacts common token shapes, configured redaction values, secret-like values from the inherited runner environment and channel environment, and the current home directory. Redaction is defense in depth, not permission to print secrets deliberately.
+
+Native executables run without a shell. Windows `.cmd` and `.bat` shims necessarily pass through `cmd.exe`; keep their arguments free of command-shell metacharacters and put complex logic in a reviewed script file. Treat every configuration as executable code.
 
 ## Reporting a vulnerability
 
