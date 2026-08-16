@@ -17,6 +17,22 @@ function windowsCommand(argv: string[]): { file: string; args: string[] } {
   return { file: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/c", file, ...args] };
 }
 
+function terminateWindowsProcessTree(pid: number): void {
+  try {
+    const killer = spawn("taskkill.exe", ["/pid", String(pid), "/t", "/f"], {
+      shell: false,
+      stdio: "ignore",
+      windowsHide: true
+    });
+    killer.on("error", () => {
+      // The target may have already exited between the timeout and taskkill.
+    });
+    killer.unref();
+  } catch {
+    // The ordinary child.kill fallback below still handles the direct process.
+  }
+}
+
 export async function execute(spec: CommandSpec, context: ExecuteContext): Promise<ProcessResult> {
   const started = Date.now();
   const timeoutMs = spec.timeoutMs ?? context.defaultTimeoutMs;
@@ -81,7 +97,7 @@ export async function execute(spec: CommandSpec, context: ExecuteContext): Promi
       timedOut = true;
       if (child.pid) {
         try {
-          if (process.platform === "win32") child.kill("SIGTERM");
+          if (process.platform === "win32") terminateWindowsProcessTree(child.pid);
           else process.kill(-child.pid, "SIGTERM");
         } catch {
           child.kill("SIGTERM");
@@ -89,8 +105,10 @@ export async function execute(spec: CommandSpec, context: ExecuteContext): Promi
         setTimeout(() => {
           if (!settled) {
             try {
-              if (process.platform !== "win32") process.kill(-child.pid!, "SIGKILL");
-              else child.kill("SIGKILL");
+              if (process.platform === "win32") {
+                terminateWindowsProcessTree(child.pid!);
+                child.kill("SIGKILL");
+              } else process.kill(-child.pid!, "SIGKILL");
             } catch {
               // The process may have already exited.
             }
