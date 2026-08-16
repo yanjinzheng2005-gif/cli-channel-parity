@@ -12,8 +12,9 @@ export interface ExecuteContext {
 function windowsCommand(argv: string[]): { file: string; args: string[] } {
   const [file = "", ...args] = argv;
   if (process.platform !== "win32" || !/\.(?:cmd|bat)$/i.test(file)) return { file, args };
-  const quote = (value: string): string => `"${value.replace(/"/g, '\\"')}"`;
-  return { file: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/s", "/c", [quote(file), ...args.map(quote)].join(" ")] };
+  // Node passes each argument to cmd.exe using Windows' native argument quoting.
+  // Pre-quoting the command here makes cmd.exe receive literal \" characters.
+  return { file: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/c", file, ...args] };
 }
 
 export async function execute(spec: CommandSpec, context: ExecuteContext): Promise<ProcessResult> {
