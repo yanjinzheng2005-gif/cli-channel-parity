@@ -39,7 +39,7 @@
     "fixture": "npm run build && node dist/cli.js run --config fixtures/channels.json --output .fixture-output --fail-on fail"
   },
   "devDependencies": {
-    "@types/node": "24.13.3",
+    "@types/node": "26.2.0",
     "esbuild": "0.28.1",
     "typescript": "7.0.2"
   }
