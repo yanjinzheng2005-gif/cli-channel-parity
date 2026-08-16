@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a narrow improvement to public-channel delivery evidence.
+title: "[feature] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: public-pain
+    attributes:
+      label: Public user pain or issue link
+      description: Show the real channel-delivery failure before proposing a feature.
+    validations:
+      required: true
+  - type: textarea
+    id: current-workaround
+    attributes:
+      label: Current workaround
+    validations:
+      required: true
+  - type: textarea
+    id: receipt
+    attributes:
+      label: Smallest new receipt field or check
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Product boundary
+      options:
+        - label: This is not release publishing, security scanning, automatic repair, or full CLI behavior testing.
+          required: true

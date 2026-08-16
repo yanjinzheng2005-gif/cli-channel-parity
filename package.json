@@ -1,0 +1,46 @@
+{
+  "name": "cli-channel-parity",
+  "version": "0.1.0",
+  "description": "Prove what users actually receive from each public CLI install channel.",
+  "type": "module",
+  "private": true,
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanjinzheng2005-gif/cli-channel-parity.git"
+  },
+  "homepage": "https://github.com/yanjinzheng2005-gif/cli-channel-parity#readme",
+  "bugs": {
+    "url": "https://github.com/yanjinzheng2005-gif/cli-channel-parity/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "channel-parity": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "examples",
+    "schema",
+    "action.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "license:check": "node scripts/check-licenses.mjs",
+    "test:release": "npm run typecheck && npm test && npm run license:check && node scripts/check-dist.mjs && node scripts/check-environment-redaction.mjs",
+    "fixture": "npm run build && node dist/cli.js run --config fixtures/channels.json --output .fixture-output --fail-on fail"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "esbuild": "0.28.1",
+    "typescript": "7.0.2"
+  }
+}

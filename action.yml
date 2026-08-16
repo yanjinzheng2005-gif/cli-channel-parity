@@ -1,0 +1,36 @@
+name: CLI Release Channel Parity
+description: Prove the version, executable path, startup, helper closure, and uninstall result delivered by a public CLI channel.
+author: Micro Tool Lab
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  config:
+    description: Path to a channel-parity JSON configuration file.
+    required: true
+  channel:
+    description: Optional channel ID, or comma-separated channel IDs. Omit to run all configured channels.
+    required: false
+    default: ""
+  output-directory:
+    description: Directory for the JSON and Markdown receipts.
+    required: false
+    default: channel-parity-output
+  fail-on:
+    description: Use unknown to fail on FAIL or UNKNOWN; use fail to fail only on FAIL.
+    required: false
+    default: unknown
+  keep-run-directory:
+    description: Keep the temporary run directory for debugging. Avoid this on shared runners.
+    required: false
+    default: "false"
+outputs:
+  result:
+    description: Overall PASS, FAIL, or UNKNOWN result.
+  report-json:
+    description: Absolute path to the machine-readable receipt.
+  report-markdown:
+    description: Absolute path to the human-readable receipt.
+runs:
+  using: node24
+  main: dist/action.cjs

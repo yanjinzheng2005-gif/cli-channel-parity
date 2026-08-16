@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a wrong channel verdict or an execution failure.
+title: "[bug] "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Remove tokens, private registry URLs, usernames, and private paths before attaching evidence.
+  - type: input
+    id: version
+    attributes:
+      label: Tool version or commit
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Runner operating system
+      options: [Linux, macOS, Windows, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Minimal redacted channel configuration
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: receipt
+    attributes:
+      label: Minimal redacted receipt evidence
+    validations:
+      required: true

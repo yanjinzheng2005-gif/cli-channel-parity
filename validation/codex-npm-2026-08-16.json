@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "product": "OpenAI Codex CLI — public npm channel snapshot 2026-08-16",
+  "expectedVersion": "0.147.0",
+  "defaults": {
+    "timeoutMs": 120000,
+    "maxOutputBytes": 65536
+  },
+  "channels": [
+    {
+      "id": "npm-latest",
+      "label": "@openai/codex from the public npm registry",
+      "executable": "codex",
+      "expectedExecutablePath": "${WORK_DIR}/npm-prefix/bin/codex${EXECUTABLE_SUFFIX}",
+      "env": {
+        "PATH": "${WORK_DIR}/npm-prefix/bin${PATH_DELIMITER}${PATH}"
+      },
+      "install": {
+        "argv": ["npm", "install", "--global", "--prefix", "${WORK_DIR}/npm-prefix", "@openai/codex@0.147.0"],
+        "timeoutMs": 120000
+      },
+      "version": {
+        "argv": ["${EXECUTABLE}", "--version"],
+        "timeoutMs": 10000
+      },
+      "launch": {
+        "argv": ["${EXECUTABLE}", "--help"],
+        "timeoutMs": 10000
+      },
+      "uninstall": {
+        "argv": ["npm", "uninstall", "--global", "--prefix", "${WORK_DIR}/npm-prefix", "@openai/codex"],
+        "timeoutMs": 60000
+      },
+      "residuePaths": [
+        "${WORK_DIR}/npm-prefix/bin/codex${EXECUTABLE_SUFFIX}",
+        "${WORK_DIR}/npm-prefix/lib/node_modules/@openai/codex"
+      ]
+    }
+  ]
+}

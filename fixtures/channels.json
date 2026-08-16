@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "product": "Controlled parity fixture",
+  "defaults": {
+    "timeoutMs": 3000,
+    "maxOutputBytes": 8192
+  },
+  "redactions": ["fixture-super-secret"],
+  "channels": [
+    {
+      "id": "good",
+      "label": "Known good channel",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "good"] },
+      "launch": { "argv": ["${EXECUTABLE}", "--help"], "timeoutMs": 1000 },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "good"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "same-version",
+      "label": "Same-version alternate output",
+      "executable": "parity-fixture",
+      "expectedVersion": "v1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "good"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "good"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "stale-version",
+      "label": "Stale public channel",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.1.0", "--mode", "good"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "good"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "launch-hang",
+      "label": "Installed CLI hangs at launch",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "hang-launch"] },
+      "launch": { "argv": ["${EXECUTABLE}", "--help"], "timeoutMs": 300 },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "hang-launch"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "path-shadow",
+      "label": "Old executable shadows new install",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/old-bin${PATH_DELIMITER}${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "path-shadow"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "path-shadow"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/old-bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "helper-missing",
+      "label": "Required helper is missing",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "missing-helper"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "missing-helper"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "uninstall-residue",
+      "label": "Uninstall leaves a helper behind",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "residue"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "residue"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    },
+    {
+      "id": "hard-install-failure",
+      "label": "Permanent installation failure",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "hard-fail"] }
+    },
+    {
+      "id": "transient-install-failure",
+      "label": "Transient registry failure",
+      "executable": "parity-fixture",
+      "expectedVersion": "1.2.0",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "1.2.0", "--mode", "transient-fail"] }
+    },
+    {
+      "id": "no-expected-version",
+      "label": "No release expectation declared",
+      "executable": "parity-fixture",
+      "expectedExecutablePath": "${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}",
+      "env": { "PATH": "${WORK_DIR}/bin${PATH_DELIMITER}${PATH}" },
+      "install": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "install", "--root", "${WORK_DIR}", "--version", "9.9.9", "--mode", "good"] },
+      "helpers": [{ "name": "parity-helper", "path": "${WORK_DIR}/share/parity-helper.txt" }],
+      "uninstall": { "argv": ["node", "${CONFIG_DIR}/install-fixture.mjs", "uninstall", "--root", "${WORK_DIR}", "--mode", "good"] },
+      "residuePaths": ["${WORK_DIR}/bin/parity-fixture${EXECUTABLE_SUFFIX}", "${WORK_DIR}/share/parity-helper.txt"]
+    }
+  ]
+}

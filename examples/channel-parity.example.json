@@ -1,0 +1,59 @@
+{
+  "$schema": "../schema/channel-parity.schema.json",
+  "schemaVersion": 1,
+  "product": "acme-cli",
+  "expectedVersion": "1.2.3",
+  "defaults": {
+    "timeoutMs": 30000,
+    "maxOutputBytes": 65536
+  },
+  "channels": [
+    {
+      "id": "npm",
+      "label": "npm public registry",
+      "executable": "acme",
+      "expectedExecutablePath": "${WORK_DIR}/npm-prefix/bin/acme${EXECUTABLE_SUFFIX}",
+      "env": {
+        "PATH": "${WORK_DIR}/npm-prefix/bin${PATH_DELIMITER}${PATH}"
+      },
+      "install": {
+        "argv": ["npm", "install", "--global", "--prefix", "${WORK_DIR}/npm-prefix", "acme-cli@1.2.3"]
+      },
+      "launch": {
+        "argv": ["${EXECUTABLE}", "--help"],
+        "timeoutMs": 10000
+      },
+      "helpers": [
+        {
+          "name": "embedded helper",
+          "path": "${WORK_DIR}/npm-prefix/lib/node_modules/acme-cli/bin/acme-helper"
+        }
+      ],
+      "uninstall": {
+        "argv": ["npm", "uninstall", "--global", "--prefix", "${WORK_DIR}/npm-prefix", "acme-cli"]
+      },
+      "residuePaths": [
+        "${WORK_DIR}/npm-prefix/bin/acme${EXECUTABLE_SUFFIX}",
+        "${WORK_DIR}/npm-prefix/lib/node_modules/acme-cli"
+      ]
+    },
+    {
+      "id": "homebrew",
+      "label": "Homebrew tap",
+      "executable": "acme",
+      "expectedVersion": "1.2.3",
+      "pathPolicy": "report",
+      "install": {
+        "argv": ["brew", "install", "acme/tap/acme-cli"]
+      },
+      "launch": {
+        "argv": ["${EXECUTABLE}", "--help"],
+        "timeoutMs": 10000
+      },
+      "uninstall": {
+        "argv": ["brew", "uninstall", "acme/tap/acme-cli"]
+      },
+      "residuePaths": ["${EXECUTABLE}"]
+    }
+  ]
+}
