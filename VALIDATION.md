@@ -23,6 +23,8 @@ The same suite also proved that JSON and Markdown verdicts agree, every failure 
 
 The dated configuration in `validation/codex-npm-2026-08-16.json` queried and pinned the public npm `latest` value for `@openai/codex`: `0.147.0`.
 
+The preserved receipt reports tool version `0.1.0`. This real public-package run predates `v0.1.1` and has not been repeated with `v0.1.1`; the separate `v0.1.1` five-job evidence is recorded below.
+
 On a disposable macOS arm64 prefix, the tool:
 
 - installed the public package without login or credentials;
