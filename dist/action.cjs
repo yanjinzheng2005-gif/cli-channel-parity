@@ -172,8 +172,20 @@ var import_node_child_process = require("node:child_process");
 function windowsCommand(argv) {
   const [file = "", ...args] = argv;
   if (process.platform !== "win32" || !/\.(?:cmd|bat)$/i.test(file)) return { file, args };
-  const quote = (value) => `"${value.replace(/"/g, '\\"')}"`;
-  return { file: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/s", "/c", [quote(file), ...args.map(quote)].join(" ")] };
+  return { file: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/c", file, ...args] };
+}
+function terminateWindowsProcessTree(pid) {
+  try {
+    const killer = (0, import_node_child_process.spawn)("taskkill.exe", ["/pid", String(pid), "/t", "/f"], {
+      shell: false,
+      stdio: "ignore",
+      windowsHide: true
+    });
+    killer.on("error", () => {
+    });
+    killer.unref();
+  } catch {
+  }
 }
 async function execute(spec, context) {
   const started = Date.now();
@@ -236,7 +248,7 @@ async function execute(spec, context) {
       timedOut = true;
       if (child.pid) {
         try {
-          if (process.platform === "win32") child.kill("SIGTERM");
+          if (process.platform === "win32") terminateWindowsProcessTree(child.pid);
           else process.kill(-child.pid, "SIGTERM");
         } catch {
           child.kill("SIGTERM");
@@ -244,8 +256,10 @@ async function execute(spec, context) {
         setTimeout(() => {
           if (!settled) {
             try {
-              if (process.platform !== "win32") process.kill(-child.pid, "SIGKILL");
-              else child.kill("SIGKILL");
+              if (process.platform === "win32") {
+                terminateWindowsProcessTree(child.pid);
+                child.kill("SIGKILL");
+              } else process.kill(-child.pid, "SIGKILL");
             } catch {
             }
           }
