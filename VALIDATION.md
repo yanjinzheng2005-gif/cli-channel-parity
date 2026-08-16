@@ -52,6 +52,14 @@ A copy excluding `node_modules`, fixture output, and validation results complete
 - Runtime dependencies: none.
 - Workflow actions: full 40-character commit pins.
 
-## Not yet proven
+## Public multi-platform evidence
 
-The repository is not uploaded yet, so the Linux and Windows GitHub-hosted jobs have not produced public run URLs. The checked-in CI matrix is the next acceptance gate after repository creation. A local macOS result must not be represented as proof for every operating system or user machine.
+The `v0.1.0` tag points to commit `4e4c0a3ab7f95aae19335e9cd7aa1463d1d42bd7`. Its [public GitHub Actions run](https://github.com/yanjinzheng2005-gif/cli-channel-parity/actions/runs/31955847194) passed all five jobs:
+
+- Ubuntu with Node.js 20, 22, and 24;
+- macOS with Node.js 24; and
+- Windows with Node.js 24.
+
+Every job installed locked dependencies, ran the npm advisory audit, executed the complete release gate, exercised the committed bundled Action, and uploaded its example receipt. The Windows runner also proves `.cmd` shim execution and process-tree cleanup for timed-out probes.
+
+This evidence is limited to the named runner images and recorded time. It must not be represented as proof for every operating system, installation channel, or user machine. External repository adoption and human readability are still unproven.
