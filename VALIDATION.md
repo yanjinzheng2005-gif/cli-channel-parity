@@ -1,4 +1,4 @@
-# Validation record — 2026-08-16
+# Validation record — 2026-08-17
 
 ## Controlled gold standards
 
@@ -17,7 +17,7 @@ The release suite passed all ten deterministic channel fixtures:
 | transient registry timeout | UNKNOWN | UNKNOWN | environment failure is not blamed on product |
 | no expected version | UNKNOWN | UNKNOWN | uncertainty is not converted to success |
 
-The same suite also proved that JSON and Markdown verdicts agree, every failure has a re-run command, common credentials and the local home path are redacted, and the bundled GitHub Action writes outputs plus a job summary.
+The same suite also proved that JSON and Markdown verdicts agree, every failure has a re-run command, common credentials, secret-like inherited environment values, and the local home path are redacted, and the bundled GitHub Action writes outputs plus a job summary. The complete automated suite passed 9 of 9 tests.
 
 ## Real public package
 
@@ -47,12 +47,24 @@ A copy excluding `node_modules`, fixture output, and validation results complete
 
 ## Dependency and license checks
 
-- npm advisory result: 0 known vulnerabilities on 2026-08-16.
+- npm advisory result: 0 known vulnerabilities on 2026-08-17.
 - Resolved dependency licenses: MIT and Apache-2.0 only.
 - Runtime dependencies: none.
 - Workflow actions: full 40-character commit pins.
 
-## Public multi-platform evidence
+## Public v0.1.1 multi-platform evidence
+
+The `v0.1.1` tag points to commit `9ef03764fc7a5f371a1968e2fae92a524d315d52`. Its [public GitHub Actions run](https://github.com/yanjinzheng2005-gif/cli-channel-parity/actions/runs/31962205924) passed all five jobs:
+
+- Ubuntu with Node.js 20, 22, and 24;
+- macOS with Node.js 24; and
+- Windows with Node.js 24.
+
+Every job installed locked dependencies, found zero npm advisory vulnerabilities, ran the complete release gate, proved the committed bundles match their source, exercised the committed bundled Action, and uploaded its example receipt.
+
+An earlier release-candidate run correctly exposed that Windows line-ending conversion made source maps non-reproducible. The repository now pins text checkouts to LF, and both the subsequent [main run](https://github.com/yanjinzheng2005-gif/cli-channel-parity/actions/runs/31961880037) and the immutable `v0.1.1` tag run passed on Windows.
+
+## Previous v0.1.0 evidence
 
 The `v0.1.0` tag points to commit `4e4c0a3ab7f95aae19335e9cd7aa1463d1d42bd7`. Its [public GitHub Actions run](https://github.com/yanjinzheng2005-gif/cli-channel-parity/actions/runs/31955847194) passed all five jobs:
 
@@ -60,6 +72,6 @@ The `v0.1.0` tag points to commit `4e4c0a3ab7f95aae19335e9cd7aa1463d1d42bd7`. It
 - macOS with Node.js 24; and
 - Windows with Node.js 24.
 
-Every job installed locked dependencies, ran the npm advisory audit, executed the complete release gate, exercised the committed bundled Action, and uploaded its example receipt. The Windows runner also proves `.cmd` shim execution and process-tree cleanup for timed-out probes.
+Every job installed locked dependencies, ran the npm advisory audit, executed the then-current release gate, exercised the committed bundled Action, and uploaded its example receipt. The Windows runner also proves `.cmd` shim execution and process-tree cleanup for timed-out probes.
 
 This evidence is limited to the named runner images and recorded time. It must not be represented as proof for every operating system, installation channel, or user machine. External repository adoption and human readability are still unproven.
